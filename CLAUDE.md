@@ -27,6 +27,39 @@
 - `@supabase/ssr` for cookie-based sessions; `@supabase/supabase-js` for the typed client
 - Hanken Grotesk via `next/font`
 
+## Page data-fetching pattern (DO THIS FOR ALL NEW PAGES)
+Server-side awaits in `page.tsx` block navigation — pages feel slow. Default to
+**client-side fetching with caching** so routes render instantly with a skeleton
+and revisits are free.
+
+Required shape for any page that reads data:
+
+1. `app/app/<route>/page.tsx` — a thin server file that does **no** awaits and
+   just renders the client component:
+   ```tsx
+   import RouteClient from "./RouteClient";
+   export default function Page() {
+     return <RouteClient />;
+   }
+   ```
+2. `app/app/<route>/RouteClient.tsx` — `"use client"`. Pulls `client_id` from
+   `useAppUser()` (already resolved once by the `/app/*` layout), then fetches
+   via the **browser** Supabase client (`getBrowserSupabase()` from
+   `@/lib/supabase/client`). Never `await` data in the server page.
+3. Wrap every fetch in `fetchCached(key, loader)` from `@/lib/client-cache`.
+   Key by `clientId` (and any filters that change the result set), e.g.
+   `contacts:${clientId}`. The cache dedupes in-flight requests and TTLs at 5
+   minutes — navigating away and back is instant.
+4. Always render a skeleton (rows, cards, metric placeholders) while
+   `loading && !data`. The shell paints first; data streams in.
+
+Reasons to break the rule (rare): SEO-critical public pages, or data that must
+be in the initial HTML for auth/redirect decisions. Auth gating already happens
+in the layout's `requireAppSession()` — pages below don't need to re-check.
+
+Writes still go through the browser Supabase client (RLS-scoped). After a
+successful write, call `invalidate(key)` so the next read refetches.
+
 ## Auth model
 - Identity lives in `auth.users` (Ploutos / shared). Sign-in posts email + password to
   the `client_portal_login` edge function. The edge function returns Supabase tokens
