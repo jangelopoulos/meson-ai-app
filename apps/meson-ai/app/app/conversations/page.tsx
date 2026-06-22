@@ -1,3 +1,10 @@
+import { Suspense } from "react";
+import ConversationsClient from "./ConversationsClient";
+
 export default function ConversationsPage() {
-  return <div className="text-sm">Conversations — coming next.</div>;
+  return (
+    <Suspense fallback={<div className="text-sm">Loading…</div>}>
+      <ConversationsClient />
+    </Suspense>
+  );
 }

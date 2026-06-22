@@ -2,6 +2,7 @@ import { BgBlobs } from "@/components/BgBlobs";
 import { Sidebar } from "@/components/Sidebar";
 import { Topbar } from "@/components/Topbar";
 import { CreateModalProvider } from "@/components/CreateModalContext";
+import { CreateCampaignModal } from "@/components/CreateCampaignModal";
 
 export default function AppLayout({
   children,
@@ -28,6 +29,7 @@ export default function AppLayout({
             <div className="flex-1 overflow-auto p-6 md:p-7">{children}</div>
           </main>
         </div>
+        <CreateCampaignModal />
       </div>
     </CreateModalProvider>
   );
