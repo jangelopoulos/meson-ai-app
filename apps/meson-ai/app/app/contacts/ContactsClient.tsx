@@ -183,11 +183,11 @@ export default function ContactsClient() {
   }
 
   return (
-    <div className="animate-pop flex flex-col gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="animate-pop flex flex-col gap-5 md:gap-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1
-            className="text-[28px] font-extrabold"
+            className="text-[22px] font-extrabold md:text-[28px]"
             style={{ letterSpacing: "-0.025em" }}
           >
             Contacts
@@ -196,16 +196,18 @@ export default function ContactsClient() {
             Everyone in your client database.
           </p>
         </div>
-        <SegmentedControl
-          value={filter}
-          onChange={resetPage(setFilter)}
-          options={[
-            { value: "all", label: "All" },
-            { value: "email", label: "Has email" },
-            { value: "phone", label: "Has phone" },
-            { value: "recent", label: "Recent" },
-          ]}
-        />
+        <div className="w-full overflow-x-auto md:w-auto">
+          <SegmentedControl
+            value={filter}
+            onChange={resetPage(setFilter)}
+            options={[
+              { value: "all", label: "All" },
+              { value: "email", label: "Has email" },
+              { value: "phone", label: "Has phone" },
+              { value: "recent", label: "Recent" },
+            ]}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -217,10 +219,10 @@ export default function ContactsClient() {
 
       <Card padded={false}>
         <div
-          className="flex flex-wrap items-center gap-3 p-4"
+          className="flex flex-col gap-3 p-3 md:flex-row md:flex-wrap md:items-center md:gap-3 md:p-4"
           style={{ borderBottom: "1px solid var(--border)" }}
         >
-          <div className="min-w-[220px] flex-1">
+          <div className="md:min-w-[220px] md:flex-1">
             <Input
               placeholder="Search name, email, phone, address…"
               value={search}
@@ -230,29 +232,31 @@ export default function ContactsClient() {
               }}
             />
           </div>
-          <Select
-            value={projectId}
-            onChange={resetPage(setProjectId)}
-            label="Project"
-          >
-            <option value="all">All projects</option>
-            {projects.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name ?? "Untitled"}
-              </option>
-            ))}
-          </Select>
-          <Select
-            value={sort}
-            onChange={(v) => setSort(v as SortKey)}
-            label="Sort"
-          >
-            <option value="created_desc">Newest</option>
-            <option value="created_asc">Oldest</option>
-            <option value="name_asc">Name A–Z</option>
-            <option value="name_desc">Name Z–A</option>
-            <option value="last_contact_desc">Last contacted</option>
-          </Select>
+          <div className="grid grid-cols-2 gap-2 md:flex md:items-center md:gap-3">
+            <Select
+              value={projectId}
+              onChange={resetPage(setProjectId)}
+              label="Project"
+            >
+              <option value="all">All projects</option>
+              {projects.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name ?? "Untitled"}
+                </option>
+              ))}
+            </Select>
+            <Select
+              value={sort}
+              onChange={(v) => setSort(v as SortKey)}
+              label="Sort"
+            >
+              <option value="created_desc">Newest</option>
+              <option value="created_asc">Oldest</option>
+              <option value="name_asc">Name A–Z</option>
+              <option value="name_desc">Name Z–A</option>
+              <option value="last_contact_desc">Last contacted</option>
+            </Select>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -438,7 +442,7 @@ function Select({
   children: React.ReactNode;
 }) {
   return (
-    <label className="flex items-center gap-2">
+    <label className="flex flex-col gap-1 md:flex-row md:items-center md:gap-2">
       <span
         className="text-[11px] font-semibold uppercase"
         style={{ color: "var(--text-faint)", letterSpacing: "0.05em" }}
@@ -448,7 +452,7 @@ function Select({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-[10px] px-3 py-2 text-[13px] font-semibold outline-none"
+        className="w-full rounded-[10px] px-3 py-2 text-[13px] font-semibold outline-none md:w-auto"
         style={{
           background: "var(--surface-2)",
           color: "var(--text)",

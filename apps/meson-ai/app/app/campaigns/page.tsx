@@ -22,11 +22,11 @@ export default function CampaignsPage() {
   });
 
   return (
-    <div className="animate-pop flex flex-col gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="animate-pop flex flex-col gap-5 md:gap-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1
-            className="text-[28px] font-extrabold"
+            className="text-[22px] font-extrabold md:text-[28px]"
             style={{ letterSpacing: "-0.025em" }}
           >
             Campaigns
@@ -35,7 +35,7 @@ export default function CampaignsPage() {
             All your AI outreach in one place.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex w-full flex-wrap items-center gap-2 md:w-auto md:gap-3">
           <SegmentedControl
             value={filter}
             onChange={setFilter}

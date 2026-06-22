@@ -45,7 +45,7 @@ export default function DashboardPage() {
             })}
           </div>
           <h1
-            className="text-[28px] font-extrabold"
+            className="text-[22px] font-extrabold md:text-[28px]"
             style={{ letterSpacing: "-0.025em" }}
           >
             Good morning, {firstName}.

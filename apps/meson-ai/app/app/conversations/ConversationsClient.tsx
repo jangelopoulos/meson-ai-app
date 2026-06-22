@@ -16,6 +16,7 @@ export default function ConversationsPage() {
     conversations.find((c) => c.id === selectedId) ?? conversations[0];
   const thread = threads[cur.id] ?? [];
   const [filter, setFilter] = useState("");
+  const [mobileView, setMobileView] = useState<"list" | "thread">("list");
 
   const filtered = conversations.filter((c) =>
     c.name.toLowerCase().includes(filter.toLowerCase())
@@ -23,12 +24,14 @@ export default function ConversationsPage() {
 
   return (
     <div
-      className="animate-pop -m-6 grid h-[calc(100vh-66px-40px)] grid-cols-1 md:m-0 md:grid-cols-[320px_1fr]"
-      style={{ minHeight: 600 }}
+      className="animate-pop -m-4 grid grid-cols-1 md:-m-7 md:grid-cols-[320px_1fr]"
+      style={{ height: "calc(100dvh - 60px - 32px - 72px - env(safe-area-inset-bottom))", minHeight: 480 }}
     >
       {/* Sidebar */}
       <aside
-        className="flex h-full flex-col overflow-hidden"
+        className={`h-full flex-col overflow-hidden ${
+          mobileView === "list" ? "flex" : "hidden"
+        } md:flex`}
         style={{ borderRight: "1px solid var(--border)" }}
       >
         <div className="p-4">
@@ -54,6 +57,7 @@ export default function ConversationsPage() {
               <li key={c.id}>
                 <Link
                   href={`/app/conversations?c=${c.id}`}
+                  onClick={() => setMobileView("thread")}
                   className="flex items-start gap-3 rounded-[12px] p-2.5"
                   style={{
                     background: active ? "var(--surface-2)" : "transparent",
@@ -93,23 +97,51 @@ export default function ConversationsPage() {
       </aside>
 
       {/* Thread */}
-      <section className="flex h-full min-w-0 flex-col">
+      <section
+        className={`h-full min-w-0 flex-col ${
+          mobileView === "thread" ? "flex" : "hidden"
+        } md:flex`}
+      >
         <header
           className="flex items-center gap-3 p-4"
           style={{ borderBottom: "1px solid var(--border)" }}
         >
+          <button
+            type="button"
+            onClick={() => setMobileView("list")}
+            className="grid h-9 w-9 flex-none cursor-pointer place-items-center rounded-[10px] md:hidden"
+            style={{
+              background: "var(--surface-2)",
+              color: "var(--text)",
+              border: "1px solid var(--border)",
+            }}
+            aria-label="Back to inbox"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
           <Avatar initials={cur.initials} size={42} />
           <div className="min-w-0 flex-1">
-            <div className="text-[15px] font-bold">{cur.name}</div>
+            <div className="truncate text-[15px] font-bold">{cur.name}</div>
             <div
-              className="text-[12px]"
+              className="truncate text-[12px]"
               style={{ color: "var(--text-faint)" }}
             >
               {cur.campaign} · {cur.phone}
             </div>
           </div>
           <span
-            className="inline-flex items-center gap-1.5 rounded-[8px] px-2 py-1 text-[11px] font-bold"
+            className="hidden items-center gap-1.5 rounded-[8px] px-2 py-1 text-[11px] font-bold sm:inline-flex"
             style={{ background: "var(--accent-soft)", color: "var(--accent)" }}
           >
             <span
@@ -162,7 +194,7 @@ export default function ConversationsPage() {
           <Input placeholder="Jump in, or let the AI keep going…" />
           <button
             type="button"
-            className="inline-flex flex-none cursor-pointer items-center gap-1.5 rounded-[11px] px-4 py-2.5 text-[13px] font-bold text-white"
+            className="inline-flex flex-none cursor-pointer items-center gap-1.5 rounded-[11px] px-3 py-2.5 text-[13px] font-bold text-white md:px-4"
             style={{
               background:
                 "linear-gradient(180deg, var(--accent), var(--accent-2))",

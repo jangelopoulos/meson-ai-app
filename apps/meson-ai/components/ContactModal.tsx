@@ -212,15 +212,15 @@ export function ContactModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-stretch justify-center p-4 md:items-center"
+      className="fixed inset-0 z-50 flex items-stretch justify-center p-3 pb-[calc(12px+72px+env(safe-area-inset-bottom))] md:items-center md:p-4 md:pb-4"
       style={{ background: "rgba(7,8,17,0.55)", backdropFilter: "blur(8px)" }}
       onClick={onClose}
     >
       <div
-        className="animate-pop flex w-full flex-col overflow-hidden rounded-[22px]"
+        className="animate-pop flex w-full flex-col overflow-hidden rounded-[18px] md:rounded-[22px]"
         style={{
           maxWidth: 1100,
-          maxHeight: "min(900px, calc(100vh - 32px))",
+          maxHeight: "min(900px, 100%)",
           background: "var(--surface)",
           backdropFilter: "var(--glass-blur)",
           WebkitBackdropFilter: "var(--glass-blur)",
