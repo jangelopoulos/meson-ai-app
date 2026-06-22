@@ -1,7 +1,18 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
+
+function PendingDot() {
+  const { pending } = useLinkStatus();
+  if (!pending) return null;
+  return (
+    <span
+      className="absolute top-1 right-[calc(50%-14px)] inline-block h-2 w-2 animate-pulse rounded-full"
+      style={{ background: "var(--accent)" }}
+    />
+  );
+}
 
 const items = [
   {
@@ -81,11 +92,12 @@ export function MobileBottomNav() {
             <li key={it.href}>
               <Link
                 href={it.href}
-                className="flex flex-col items-center justify-center gap-1 px-1 py-2.5"
+                className="relative flex flex-col items-center justify-center gap-1 px-1 py-2.5"
                 style={{
                   color: active ? "var(--accent)" : "var(--text-dim)",
                 }}
               >
+                <PendingDot />
                 <svg
                   width="20"
                   height="20"

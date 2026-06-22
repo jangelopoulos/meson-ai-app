@@ -1,10 +1,24 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoMark, Wordmark } from "./Logo";
 import { useAppUser } from "./UserContext";
 import { signOut } from "@/lib/auth/actions";
+
+function NavSpinner() {
+  const { pending } = useLinkStatus();
+  if (!pending) return null;
+  return (
+    <span
+      className="ml-auto inline-block h-3.5 w-3.5 animate-spin rounded-full"
+      style={{
+        border: "2px solid var(--surface-2)",
+        borderTopColor: "var(--accent)",
+      }}
+    />
+  );
+}
 
 const items = [
   {
@@ -48,6 +62,18 @@ const items = [
         <circle cx="9" cy="7" r="4" />
         <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </>
+    ),
+  },
+  {
+    href: "/app/integrations",
+    label: "Integrations",
+    icon: (
+      <>
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+        <path d="M6.5 10v4M10 17.5h4" />
       </>
     ),
   },
@@ -117,6 +143,7 @@ export function Sidebar() {
                 {it.icon}
               </svg>
               <span>{it.label}</span>
+              <NavSpinner />
               {it.badge && (
                 <span
                   className="ml-auto rounded-[8px] px-[7px] py-[2px] text-[11px] font-bold text-white"
