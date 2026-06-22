@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { BgBlobs } from "@/components/BgBlobs";
 import { LogoMark, Wordmark } from "@/components/Logo";
 
@@ -9,6 +10,8 @@ type Mode = "signin" | "signup";
 export default function AuthPage() {
   const [mode, setMode] = useState<Mode>("signin");
   const isSignup = mode === "signup";
+  const router = useRouter();
+  const submit = () => router.push("/app/dashboard");
 
   return (
     <main className="relative min-h-screen">
@@ -128,6 +131,7 @@ export default function AuthPage() {
 
             <button
               type="button"
+              onClick={submit}
               className="mt-1.5 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[13px] px-4 py-3.5 text-[15px] font-bold text-white"
               style={{
                 background:
@@ -156,6 +160,7 @@ export default function AuthPage() {
 
             <button
               type="button"
+              onClick={submit}
               className="inline-flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-[13px] px-4 py-3 text-sm font-semibold"
               style={{
                 background: "var(--surface-2)",
