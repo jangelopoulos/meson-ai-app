@@ -1,10 +1,24 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoMark, Wordmark } from "./Logo";
 import { useAppUser } from "./UserContext";
 import { signOut } from "@/lib/auth/actions";
+
+function NavSpinner() {
+  const { pending } = useLinkStatus();
+  if (!pending) return null;
+  return (
+    <span
+      className="ml-auto inline-block h-3.5 w-3.5 animate-spin rounded-full"
+      style={{
+        border: "2px solid var(--surface-2)",
+        borderTopColor: "var(--accent)",
+      }}
+    />
+  );
+}
 
 const items = [
   {
@@ -129,6 +143,7 @@ export function Sidebar() {
                 {it.icon}
               </svg>
               <span>{it.label}</span>
+              <NavSpinner />
               {it.badge && (
                 <span
                   className="ml-auto rounded-[8px] px-[7px] py-[2px] text-[11px] font-bold text-white"
