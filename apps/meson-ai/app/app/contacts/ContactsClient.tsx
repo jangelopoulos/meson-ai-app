@@ -5,6 +5,7 @@ import { Card } from "@/components/Card";
 import { Input } from "@/components/Input";
 import { SegmentedControl } from "@/components/SegmentedControl";
 import { useAppUser } from "@/components/UserContext";
+import { ContactModal } from "@/components/ContactModal";
 import { getBrowserSupabase } from "@/lib/supabase/client";
 import { fetchCached, getCached } from "@/lib/client-cache";
 
@@ -86,6 +87,7 @@ export default function ContactsClient() {
   const [sort, setSort] = useState<SortKey>("created_desc");
   const [pageSize, setPageSize] = useState<number>(25);
   const [page, setPage] = useState<number>(1);
+  const [selected, setSelected] = useState<Contact | null>(null);
 
   const contacts = data?.contacts ?? [];
   const projects = data?.projects ?? [];
@@ -287,6 +289,8 @@ export default function ContactsClient() {
                 return (
                   <tr
                     key={c.id}
+                    onClick={() => setSelected(c)}
+                    className="cursor-pointer transition hover:bg-[var(--surface)]"
                     style={{ borderTop: "1px solid var(--border)" }}
                   >
                     <td className="px-4 py-3.5 font-semibold">{fullName}</td>
@@ -378,6 +382,12 @@ export default function ContactsClient() {
           </div>
         </div>
       </Card>
+
+      <ContactModal
+        contact={selected}
+        open={!!selected}
+        onClose={() => setSelected(null)}
+      />
     </div>
   );
 }
