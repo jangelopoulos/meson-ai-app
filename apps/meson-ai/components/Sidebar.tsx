@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoMark, Wordmark } from "./Logo";
-import { user } from "@/lib/mock-data";
+import { useAppUser } from "./UserContext";
+import { signOut } from "@/lib/auth/actions";
 
 const items = [
   {
@@ -52,6 +53,12 @@ const items = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { user, client } = useAppUser();
+  const fullName = `${user.first_name} ${user.last_name}`.trim() || user.email;
+  const initials =
+    (user.first_name?.[0] ?? "") + (user.last_name?.[0] ?? "") ||
+    user.email[0].toUpperCase();
+  const orgName = client?.company_name ?? "—";
 
   return (
     <aside
@@ -152,44 +159,46 @@ export function Sidebar() {
               background: "linear-gradient(140deg, var(--sms), var(--call))",
             }}
           >
-            {user.initials}
+            {initials}
           </div>
           <div className="min-w-0 flex-1">
             <div className="truncate text-[13px] font-semibold">
-              {user.name}
+              {fullName}
             </div>
             <div
               className="truncate text-[11px]"
               style={{ color: "var(--text-faint)" }}
             >
-              {user.org}
+              {orgName}
             </div>
           </div>
-          <Link
-            href="/"
-            title="Sign out"
-            className="grid h-[30px] w-[30px] cursor-pointer place-items-center rounded-[9px]"
-            style={{
-              background: "var(--surface)",
-              color: "var(--text-dim)",
-              border: "1px solid var(--border)",
-            }}
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.9"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          <form action={signOut}>
+            <button
+              type="submit"
+              title="Sign out"
+              className="grid h-[30px] w-[30px] cursor-pointer place-items-center rounded-[9px]"
+              style={{
+                background: "var(--surface)",
+                color: "var(--text-dim)",
+                border: "1px solid var(--border)",
+              }}
             >
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <path d="m16 17 5-5-5-5" />
-              <path d="M21 12H9" />
-            </svg>
-          </Link>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.9"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <path d="m16 17 5-5-5-5" />
+                <path d="M21 12H9" />
+              </svg>
+            </button>
+          </form>
         </div>
       </div>
     </aside>

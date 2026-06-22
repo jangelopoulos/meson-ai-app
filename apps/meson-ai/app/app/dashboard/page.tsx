@@ -13,8 +13,8 @@ import {
   campaigns,
   kpis,
   messagingChart,
-  user,
 } from "@/lib/mock-data";
+import { useAppUser } from "@/components/UserContext";
 
 const dotColor: Record<string, string> = {
   accent: "var(--accent)",
@@ -26,6 +26,8 @@ const dotColor: Record<string, string> = {
 export default function DashboardPage() {
   const [range, setRange] = useState<"7d" | "30d" | "quarter">("7d");
   const active = campaigns.filter((c) => c.status !== "draft");
+  const { user } = useAppUser();
+  const firstName = user.first_name || user.email.split("@")[0];
 
   return (
     <div className="animate-pop flex flex-col gap-6">
@@ -46,7 +48,7 @@ export default function DashboardPage() {
             className="text-[28px] font-extrabold"
             style={{ letterSpacing: "-0.025em" }}
           >
-            Good morning, {user.name.split(" ")[0]}.
+            Good morning, {firstName}.
           </h1>
         </div>
         <SegmentedControl

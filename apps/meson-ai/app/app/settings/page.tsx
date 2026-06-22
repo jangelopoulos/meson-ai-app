@@ -4,10 +4,16 @@ import { Card } from "@/components/Card";
 import { Input } from "@/components/Input";
 import { SegmentedControl } from "@/components/SegmentedControl";
 import { useTheme } from "@/components/ThemeProvider";
-import { numbers, user } from "@/lib/mock-data";
+import { useAppUser } from "@/components/UserContext";
+import { numbers } from "@/lib/mock-data";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
+  const { user } = useAppUser();
+  const fullName = `${user.first_name} ${user.last_name}`.trim() || user.email;
+  const initials =
+    (user.first_name?.[0] ?? "") + (user.last_name?.[0] ?? "") ||
+    user.email[0].toUpperCase();
 
   return (
     <div className="animate-pop mx-auto flex w-full max-w-[760px] flex-col gap-6">
@@ -32,7 +38,7 @@ export default function SettingsPage() {
               background: "linear-gradient(140deg, var(--sms), var(--call))",
             }}
           >
-            {user.initials}
+            {initials}
           </div>
           <button
             type="button"
@@ -47,7 +53,7 @@ export default function SettingsPage() {
           </button>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Full name" defaultValue={user.name} />
+          <Field label="Full name" defaultValue={fullName} />
           <Field label="Email" type="email" defaultValue={user.email} />
         </div>
       </Card>

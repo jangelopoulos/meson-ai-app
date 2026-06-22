@@ -64,20 +64,6 @@ export type CallLogEntry = {
   sentiment: "positive" | "neutral" | "negative";
 };
 
-export type User = {
-  name: string;
-  email: string;
-  initials: string;
-  org: string;
-};
-
-export const user: User = {
-  name: "David Chen",
-  email: "david@raywhite-hawthorn.com.au",
-  initials: "DC",
-  org: "Ray White Hawthorn",
-};
-
 export const campaigns: Campaign[] = [
   {
     id: "c1",
