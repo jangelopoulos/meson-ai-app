@@ -1,10 +1,8 @@
--- meson_ai.ai_agents: per-client AI agent registry (persona, prompt, KB, voice).
--- Channel-agnostic: voice fields nullable. Knowledge base is free-form text for now.
--- RLS scoped to the calling user's client_id via public.users.
+-- public.ai_agents: per-client AI agent registry (persona, prompt, KB, voice).
+-- Lives in public so Supabase's managed PostgREST exposes it without dashboard
+-- config changes. RLS scoped to the caller's client_id via public.users.
 
-create schema if not exists meson_ai;
-
-create table meson_ai.ai_agents (
+create table public.ai_agents (
   id                      uuid primary key default gen_random_uuid(),
   created_at              timestamptz not null default now(),
   updated_at              timestamptz not null default now(),
@@ -39,11 +37,11 @@ create table meson_ai.ai_agents (
   metadata                jsonb not null default '{}'::jsonb
 );
 
-create index ai_agents_client_id_idx     on meson_ai.ai_agents (client_id);
-create index ai_agents_status_idx        on meson_ai.ai_agents (client_id, status);
-create index ai_agents_created_at_idx    on meson_ai.ai_agents (client_id, created_at desc);
+create index ai_agents_client_id_idx     on public.ai_agents (client_id);
+create index ai_agents_status_idx        on public.ai_agents (client_id, status);
+create index ai_agents_created_at_idx    on public.ai_agents (client_id, created_at desc);
 
-create or replace function meson_ai.set_updated_at() returns trigger
+create or replace function public.set_updated_at() returns trigger
 language plpgsql as $$
 begin
   new.updated_at := now();
@@ -52,13 +50,13 @@ end
 $$;
 
 create trigger ai_agents_set_updated_at
-before update on meson_ai.ai_agents
-for each row execute function meson_ai.set_updated_at();
+before update on public.ai_agents
+for each row execute function public.set_updated_at();
 
-alter table meson_ai.ai_agents enable row level security;
-alter table meson_ai.ai_agents force  row level security;
+alter table public.ai_agents enable row level security;
+alter table public.ai_agents force  row level security;
 
-create policy ai_agents_select on meson_ai.ai_agents
+create policy ai_agents_select on public.ai_agents
   for select using (
     client_id = (
       select u.client_id from public.users u
@@ -66,7 +64,7 @@ create policy ai_agents_select on meson_ai.ai_agents
     )
   );
 
-create policy ai_agents_insert on meson_ai.ai_agents
+create policy ai_agents_insert on public.ai_agents
   for insert with check (
     client_id = (
       select u.client_id from public.users u
@@ -74,7 +72,7 @@ create policy ai_agents_insert on meson_ai.ai_agents
     )
   );
 
-create policy ai_agents_update on meson_ai.ai_agents
+create policy ai_agents_update on public.ai_agents
   for update using (
     client_id = (
       select u.client_id from public.users u
@@ -82,7 +80,7 @@ create policy ai_agents_update on meson_ai.ai_agents
     )
   );
 
-create policy ai_agents_delete on meson_ai.ai_agents
+create policy ai_agents_delete on public.ai_agents
   for delete using (
     client_id = (
       select u.client_id from public.users u
@@ -90,5 +88,4 @@ create policy ai_agents_delete on meson_ai.ai_agents
     )
   );
 
-grant usage on schema meson_ai to authenticated;
-grant select, insert, update, delete on meson_ai.ai_agents to authenticated;
+grant select, insert, update, delete on public.ai_agents to authenticated;

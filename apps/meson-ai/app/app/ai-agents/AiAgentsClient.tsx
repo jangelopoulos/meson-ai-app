@@ -21,7 +21,6 @@ type SortKey =
 async function loadAgents(clientId: string): Promise<Agent[]> {
   const supabase = getBrowserSupabase();
   const { data } = await supabase
-    .schema("meson_ai")
     .from("ai_agents")
     .select("*")
     .eq("client_id", clientId)

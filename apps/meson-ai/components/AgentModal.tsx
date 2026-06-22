@@ -121,13 +121,11 @@ export function AgentModal({
     try {
       if (mode === "create") {
         const { error: err } = await supabase
-          .schema("meson_ai")
           .from("ai_agents")
           .insert({ ...payload, client_id: clientId });
         if (err) throw err;
       } else if (agent) {
         const { error: err } = await supabase
-          .schema("meson_ai")
           .from("ai_agents")
           .update(payload)
           .eq("id", agent.id);
@@ -152,7 +150,6 @@ export function AgentModal({
     const supabase = getBrowserSupabase();
     try {
       const { error: err } = await supabase
-        .schema("meson_ai")
         .from("ai_agents")
         .delete()
         .eq("id", agent.id);
