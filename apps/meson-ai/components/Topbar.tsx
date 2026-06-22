@@ -1,5 +1,6 @@
 "use client";
 
+import { LogoMark } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { useCreateModal } from "./CreateModalContext";
 
@@ -7,11 +8,15 @@ export function Topbar() {
   const { setOpen } = useCreateModal();
   return (
     <header
-      className="flex h-[66px] flex-none items-center gap-4 px-5"
+      className="flex h-[60px] flex-none items-center gap-2 px-3 md:h-[66px] md:gap-4 md:px-5"
       style={{ borderBottom: "1px solid var(--border)" }}
     >
+      <div className="md:hidden">
+        <LogoMark size={32} />
+      </div>
+
       <div
-        className="ml-1 flex max-w-[380px] flex-1 items-center gap-2.5 rounded-[12px] px-3 py-2.5"
+        className="ml-1 hidden max-w-[380px] flex-1 items-center gap-2.5 rounded-[12px] px-3 py-2.5 sm:flex"
         style={{
           background: "var(--surface-2)",
           border: "1px solid var(--border)",
@@ -36,7 +41,30 @@ export function Topbar() {
         />
       </div>
 
-      <div className="ml-auto flex items-center gap-2.5">
+      <div className="ml-auto flex items-center gap-2 md:gap-2.5">
+        <button
+          type="button"
+          title="Search"
+          className="grid h-[38px] w-[38px] cursor-pointer place-items-center rounded-[11px] sm:hidden"
+          style={{
+            background: "var(--surface-2)",
+            color: "var(--text)",
+            border: "1px solid var(--border)",
+          }}
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+        </button>
         <ThemeToggle />
         <button
           type="button"
@@ -72,7 +100,7 @@ export function Topbar() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex cursor-pointer items-center gap-2 rounded-[12px] px-4 py-2.5 text-[13px] font-bold text-white"
+          className="inline-flex cursor-pointer items-center gap-2 rounded-[12px] px-3 py-2.5 text-[13px] font-bold text-white md:px-4"
           style={{
             background:
               "linear-gradient(180deg, var(--accent), var(--accent-2))",
@@ -91,7 +119,7 @@ export function Topbar() {
           >
             <path d="M12 5v14M5 12h14" />
           </svg>
-          New campaign
+          <span className="hidden sm:inline">New campaign</span>
         </button>
       </div>
     </header>

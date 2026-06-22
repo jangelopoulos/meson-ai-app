@@ -5,6 +5,7 @@ import { Input } from "@/components/Input";
 import { SegmentedControl } from "@/components/SegmentedControl";
 import { useTheme } from "@/components/ThemeProvider";
 import { useAppUser } from "@/components/UserContext";
+import { signOut } from "@/lib/auth/actions";
 import { numbers } from "@/lib/mock-data";
 
 export default function SettingsPage() {
@@ -149,6 +150,20 @@ export default function SettingsPage() {
           ]}
         />
       </Card>
+
+      <form action={signOut} className="md:hidden">
+        <button
+          type="submit"
+          className="w-full cursor-pointer rounded-[12px] px-4 py-3 text-[13px] font-bold"
+          style={{
+            background: "var(--surface-2)",
+            color: "var(--red)",
+            border: "1px solid var(--border-strong)",
+          }}
+        >
+          Sign out
+        </button>
+      </form>
     </div>
   );
 }
