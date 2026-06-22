@@ -1,6 +1,8 @@
 import { BgBlobs } from "@/components/BgBlobs";
 import { Sidebar } from "@/components/Sidebar";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { MobileSidebarDrawer } from "@/components/MobileSidebarDrawer";
+import { MobileSidebarProvider } from "@/components/MobileSidebarContext";
 import { Topbar } from "@/components/Topbar";
 import { CreateModalProvider } from "@/components/CreateModalContext";
 import { CreateCampaignModal } from "@/components/CreateCampaignModal";
@@ -16,6 +18,7 @@ export default async function AppLayout({
 
   return (
     <UserProvider value={session}>
+      <MobileSidebarProvider>
       <CreateModalProvider>
         <div className="relative min-h-screen">
           <BgBlobs />
@@ -36,9 +39,11 @@ export default async function AppLayout({
             </main>
           </div>
           <MobileBottomNav />
+          <MobileSidebarDrawer />
           <CreateCampaignModal />
         </div>
       </CreateModalProvider>
+      </MobileSidebarProvider>
     </UserProvider>
   );
 }
