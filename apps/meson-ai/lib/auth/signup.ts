@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { getServiceSupabase } from "@/lib/supabase/admin";
 import { getAppSession } from "./get-session";
@@ -169,6 +170,7 @@ export async function createCompany(input: {
     .eq("id", session.user.id);
   if (updRes.error) return { error: updRes.error.message };
 
+  revalidatePath("/app", "layout");
   return { ok: true };
 }
 
@@ -200,6 +202,7 @@ export async function completeSignup(): Promise<void> {
       .update({ status: "Active" })
       .eq("id", session.client.id);
   }
+  revalidatePath("/app", "layout");
   redirect("/app/dashboard");
 }
 
