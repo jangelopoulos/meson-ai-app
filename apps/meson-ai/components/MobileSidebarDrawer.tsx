@@ -41,7 +41,7 @@ export function MobileSidebarDrawer() {
         className="absolute left-0 top-0 flex h-full w-[268px] max-w-[85vw] flex-col p-4 transition-transform duration-200"
         style={{
           transform: open ? "translateX(0)" : "translateX(-100%)",
-          background: "var(--surface)",
+          background: "var(--surface-modal)",
           backdropFilter: "var(--glass-blur)",
           WebkitBackdropFilter: "var(--glass-blur)",
           borderRight: "1px solid var(--border)",

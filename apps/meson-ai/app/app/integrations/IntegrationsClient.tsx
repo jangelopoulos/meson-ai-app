@@ -425,7 +425,7 @@ function IntegrationModal({
         style={{
           maxWidth: 720,
           maxHeight: "min(820px, 100%)",
-          background: "var(--surface)",
+          background: "var(--surface-modal)",
           backdropFilter: "var(--glass-blur)",
           WebkitBackdropFilter: "var(--glass-blur)",
           border: "1px solid var(--border)",

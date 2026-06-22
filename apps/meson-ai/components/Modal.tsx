@@ -39,7 +39,7 @@ export function Modal({
         className="animate-pop w-full overflow-hidden rounded-[22px]"
         style={{
           maxWidth,
-          background: "var(--surface)",
+          background: "var(--surface-modal)",
           backdropFilter: "var(--glass-blur)",
           WebkitBackdropFilter: "var(--glass-blur)",
           border: "1px solid var(--border)",

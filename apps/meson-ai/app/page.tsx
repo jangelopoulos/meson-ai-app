@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState } from "react";
 import { BgBlobs } from "@/components/BgBlobs";
 import { LogoMark, Wordmark } from "@/components/Logo";
@@ -75,7 +76,7 @@ export default function AuthPage() {
           </div>
 
           {/* Form panel */}
-          <form action={formAction} className="flex flex-col justify-center p-8 sm:p-11">
+          <div className="flex flex-col justify-center p-8 sm:p-11">
             <div
               className="mb-6 flex gap-1.5 rounded-[13px] p-1.5"
               style={{
@@ -91,90 +92,139 @@ export default function AuthPage() {
               </TabButton>
             </div>
 
-            <h2
-              className="mb-1.5 text-[23px] font-bold"
-              style={{ letterSpacing: "-0.02em" }}
-            >
-              {isSignup ? "Create your account" : "Welcome back"}
-            </h2>
-            <p className="mb-6 text-sm" style={{ color: "var(--text-dim)" }}>
-              {isSignup
-                ? "Get your AI agents running in under five minutes."
-                : "Sign in to manage your campaigns."}
-            </p>
-
-            {isSignup && (
-              <Field
-                label="Full name"
-                input={
-                  <Input name="name" placeholder="David Chen" autoComplete="name" />
-                }
-              />
-            )}
-
-            <Field
-              label="Work email"
-              input={
-                <Input
-                  name="email"
-                  placeholder="david@agency.com.au"
-                  type="email"
-                  autoComplete="email"
-                  required
+            {!isSignup ? (
+              <form action={formAction} className="flex flex-col">
+                <h2
+                  className="mb-1.5 text-[23px] font-bold"
+                  style={{ letterSpacing: "-0.02em" }}
+                >
+                  Welcome back
+                </h2>
+                <p
+                  className="mb-6 text-sm"
+                  style={{ color: "var(--text-dim)" }}
+                >
+                  Sign in to manage your campaigns.
+                </p>
+                <Field
+                  label="Work email"
+                  input={
+                    <Input
+                      name="email"
+                      placeholder="david@agency.com.au"
+                      type="email"
+                      autoComplete="email"
+                      required
+                    />
+                  }
                 />
-              }
-            />
-            <Field
-              label="Password"
-              input={
-                <Input
-                  name="password"
-                  type="password"
-                  placeholder="••••••••••"
-                  autoComplete={isSignup ? "new-password" : "current-password"}
-                  required
+                <Field
+                  label="Password"
+                  input={
+                    <Input
+                      name="password"
+                      type="password"
+                      placeholder="••••••••••"
+                      autoComplete="current-password"
+                      required
+                    />
+                  }
                 />
-              }
-            />
-
-            {state?.error && (
-              <div
-                className="mb-3 rounded-[11px] px-3 py-2 text-[12.5px] font-semibold"
-                style={{
-                  background: "rgba(255,108,108,0.12)",
-                  color: "var(--red)",
-                  border: "1px solid rgba(255,108,108,0.3)",
-                }}
-              >
-                {state.error}
+                {state?.error && (
+                  <div
+                    className="mb-3 rounded-[11px] px-3 py-2 text-[12.5px] font-semibold"
+                    style={{
+                      background: "rgba(255,108,108,0.12)",
+                      color: "var(--red)",
+                      border: "1px solid rgba(255,108,108,0.3)",
+                    }}
+                  >
+                    {state.error}
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  disabled={pending}
+                  className="mt-1.5 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[13px] px-4 py-3.5 text-[15px] font-bold text-white disabled:opacity-70"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, var(--accent), var(--accent-2))",
+                    boxShadow: "0 10px 26px var(--accent-soft)",
+                    border: "1px solid transparent",
+                  }}
+                >
+                  {pending ? "Signing in…" : "Sign in"}
+                </button>
+                <p
+                  className="mt-6 text-center text-xs"
+                  style={{ color: "var(--text-faint)" }}
+                >
+                  By continuing you agree to our Terms &amp; Privacy.
+                </p>
+              </form>
+            ) : (
+              <div className="flex flex-col">
+                <h2
+                  className="mb-1.5 text-[23px] font-bold"
+                  style={{ letterSpacing: "-0.02em" }}
+                >
+                  Create your account
+                </h2>
+                <p
+                  className="mb-6 text-sm"
+                  style={{ color: "var(--text-dim)" }}
+                >
+                  A quick 5-step setup. Tell us about you, your company, and
+                  pick a plan — Stripe can wait.
+                </p>
+                <ul
+                  className="mb-7 flex flex-col gap-2 text-[13.5px]"
+                  style={{ color: "var(--text-dim)" }}
+                >
+                  {[
+                    "Free plan included — pay per call/sms only",
+                    "Lower per-call & per-sms rates on Starter / Pro",
+                    "Sign up takes about 3 minutes",
+                  ].map((line) => (
+                    <li key={line} className="flex items-start gap-2">
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="var(--accent)"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="mt-1 flex-none"
+                      >
+                        <path d="M5 12l5 5L20 7" />
+                      </svg>
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/signup"
+                  className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[13px] px-4 py-3.5 text-[15px] font-bold text-white"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, var(--accent), var(--accent-2))",
+                    boxShadow: "0 10px 26px var(--accent-soft)",
+                    border: "1px solid transparent",
+                  }}
+                >
+                  Get started →
+                </Link>
+                <p
+                  className="mt-6 text-center text-xs"
+                  style={{ color: "var(--text-faint)" }}
+                >
+                  By continuing you agree to our Terms &amp; Privacy.
+                </p>
               </div>
             )}
-
-            <button
-              type="submit"
-              disabled={pending}
-              className="mt-1.5 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-[13px] px-4 py-3.5 text-[15px] font-bold text-white disabled:opacity-70"
-              style={{
-                background:
-                  "linear-gradient(180deg, var(--accent), var(--accent-2))",
-                boxShadow: "0 10px 26px var(--accent-soft)",
-                border: "1px solid transparent",
-              }}
-            >
-              {pending
-                ? "Signing in…"
-                : isSignup
-                  ? "Create account"
-                  : "Sign in"}
-            </button>
-
-            <p
-              className="mt-6 text-center text-xs"
-              style={{ color: "var(--text-faint)" }}
-            >
-              By continuing you agree to our Terms &amp; Privacy.
-            </p>
-          </form>
+          </div>
         </div>
       </div>
     </main>

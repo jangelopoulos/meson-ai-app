@@ -221,7 +221,7 @@ export function ContactModal({
         style={{
           maxWidth: 1100,
           maxHeight: "min(900px, 100%)",
-          background: "var(--surface)",
+          background: "var(--surface-modal)",
           backdropFilter: "var(--glass-blur)",
           WebkitBackdropFilter: "var(--glass-blur)",
           border: "1px solid var(--border)",
