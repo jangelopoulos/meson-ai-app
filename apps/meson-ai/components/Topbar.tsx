@@ -3,14 +3,40 @@
 import { LogoMark } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { useCreateModal } from "./CreateModalContext";
+import { useMobileSidebar } from "./MobileSidebarContext";
 
 export function Topbar() {
   const { setOpen } = useCreateModal();
+  const { setOpen: setSidebarOpen } = useMobileSidebar();
   return (
     <header
       className="flex h-[60px] flex-none items-center gap-2 px-3 md:h-[66px] md:gap-4 md:px-5"
       style={{ borderBottom: "1px solid var(--border)" }}
     >
+      <button
+        type="button"
+        onClick={() => setSidebarOpen(true)}
+        title="Open menu"
+        aria-label="Open menu"
+        className="grid h-[38px] w-[38px] cursor-pointer place-items-center rounded-[11px] md:hidden"
+        style={{
+          background: "var(--surface-2)",
+          color: "var(--text)",
+          border: "1px solid var(--border)",
+        }}
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.9"
+          strokeLinecap="round"
+        >
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
+      </button>
       <div className="md:hidden">
         <LogoMark size={32} />
       </div>

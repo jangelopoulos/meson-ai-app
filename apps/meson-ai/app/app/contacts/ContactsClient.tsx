@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/Card";
 import { Input } from "@/components/Input";
+import { Select } from "@/components/Select";
 import { SegmentedControl } from "@/components/SegmentedControl";
 import { useAppUser } from "@/components/UserContext";
 import { ContactModal } from "@/components/ContactModal";
@@ -235,7 +236,7 @@ export default function ContactsClient() {
           <div className="grid grid-cols-2 gap-2 md:flex md:items-center md:gap-3">
             <Select
               value={projectId}
-              onChange={resetPage(setProjectId)}
+              onChange={(e) => resetPage(setProjectId)(e.target.value)}
               label="Project"
             >
               <option value="all">All projects</option>
@@ -247,7 +248,7 @@ export default function ContactsClient() {
             </Select>
             <Select
               value={sort}
-              onChange={(v) => setSort(v as SortKey)}
+              onChange={(e) => setSort(e.target.value as SortKey)}
               label="Sort"
             >
               <option value="created_desc">Newest</option>
@@ -351,8 +352,8 @@ export default function ContactsClient() {
           <div className="flex items-center gap-3">
             <Select
               value={String(pageSize)}
-              onChange={(v) => {
-                setPageSize(Number(v));
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
                 setPage(1);
               }}
               label="Rows"
@@ -427,41 +428,6 @@ function Metric({
         </div>
       )}
     </Card>
-  );
-}
-
-function Select({
-  value,
-  onChange,
-  label,
-  children,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="flex flex-col gap-1 md:flex-row md:items-center md:gap-2">
-      <span
-        className="text-[11px] font-semibold uppercase"
-        style={{ color: "var(--text-faint)", letterSpacing: "0.05em" }}
-      >
-        {label}
-      </span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-[10px] px-3 py-2 text-[13px] font-semibold outline-none md:w-auto"
-        style={{
-          background: "var(--surface-2)",
-          color: "var(--text)",
-          border: "1px solid var(--border-strong)",
-        }}
-      >
-        {children}
-      </select>
-    </label>
   );
 }
 

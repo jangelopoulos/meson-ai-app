@@ -66,6 +66,18 @@ const items = [
     ),
   },
   {
+    href: "/app/ai-agents",
+    label: "AI Agents",
+    icon: (
+      <>
+        <path d="M12 2a3 3 0 0 1 3 3v1h1a4 4 0 0 1 4 4v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-6a4 4 0 0 1 4-4h1V5a3 3 0 0 1 3-3z" />
+        <circle cx="9" cy="13" r="1.2" />
+        <circle cx="15" cy="13" r="1.2" />
+        <path d="M9 17h6" />
+      </>
+    ),
+  },
+  {
     href: "/app/integrations",
     label: "Integrations",
     icon: (
@@ -89,7 +101,7 @@ const items = [
   },
 ];
 
-export function Sidebar() {
+export function SidebarContents({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { user, client } = useAppUser();
   const fullName = `${user.first_name} ${user.last_name}`.trim() || user.email;
@@ -99,16 +111,7 @@ export function Sidebar() {
   const orgName = client?.company_name ?? "—";
 
   return (
-    <aside
-      className="hidden w-[248px] flex-none flex-col rounded-[22px] p-4 md:flex"
-      style={{
-        background: "var(--surface)",
-        backdropFilter: "var(--glass-blur)",
-        WebkitBackdropFilter: "var(--glass-blur)",
-        border: "1px solid var(--border)",
-        boxShadow: "var(--shadow), inset 0 1px 0 var(--sheen)",
-      }}
-    >
+    <>
       <div className="mb-6 flex items-center gap-2.5 px-1.5 pt-1">
         <LogoMark size={34} />
         <Wordmark size={16} />
@@ -116,11 +119,13 @@ export function Sidebar() {
 
       <nav className="flex flex-col gap-1">
         {items.map((it) => {
-          const active = pathname === it.href || pathname.startsWith(it.href + "/");
+          const active =
+            pathname === it.href || pathname.startsWith(it.href + "/");
           return (
             <Link
               key={it.href}
               href={it.href}
+              onClick={onNavigate}
               className="flex items-center gap-3 rounded-[11px] px-3 py-2.5 text-[13.5px] font-semibold transition"
               style={{
                 background: active ? "var(--surface-2)" : "transparent",
@@ -190,7 +195,10 @@ export function Sidebar() {
 
         <div
           className="flex items-center gap-2.5 rounded-[14px] p-2.5"
-          style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
+          style={{
+            background: "var(--surface-2)",
+            border: "1px solid var(--border)",
+          }}
         >
           <div
             className="grid h-[34px] w-[34px] flex-none place-items-center rounded-full text-[13px] font-bold text-white"
@@ -201,9 +209,7 @@ export function Sidebar() {
             {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-[13px] font-semibold">
-              {fullName}
-            </div>
+            <div className="truncate text-[13px] font-semibold">{fullName}</div>
             <div
               className="truncate text-[11px]"
               style={{ color: "var(--text-faint)" }}
@@ -240,6 +246,23 @@ export function Sidebar() {
           </form>
         </div>
       </div>
+    </>
+  );
+}
+
+export function Sidebar() {
+  return (
+    <aside
+      className="hidden w-[248px] flex-none flex-col rounded-[22px] p-4 md:flex"
+      style={{
+        background: "var(--surface)",
+        backdropFilter: "var(--glass-blur)",
+        WebkitBackdropFilter: "var(--glass-blur)",
+        border: "1px solid var(--border)",
+        boxShadow: "var(--shadow), inset 0 1px 0 var(--sheen)",
+      }}
+    >
+      <SidebarContents />
     </aside>
   );
 }
