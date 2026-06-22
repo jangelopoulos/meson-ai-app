@@ -52,6 +52,18 @@ const items = [
     ),
   },
   {
+    href: "/app/integrations",
+    label: "Integrations",
+    icon: (
+      <>
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+        <path d="M6.5 10v4M10 17.5h4" />
+      </>
+    ),
+  },
+  {
     href: "/app/settings",
     label: "Settings",
     icon: (
