@@ -1,9 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/Card";
 import { Input } from "@/components/Input";
 import { SegmentedControl } from "@/components/SegmentedControl";
+import { useAppUser } from "@/components/UserContext";
+import { getBrowserSupabase } from "@/lib/supabase/client";
+import { fetchCached, getCached } from "@/lib/client-cache";
 
 export type Contact = {
   id: string;
@@ -20,19 +23,63 @@ export type Contact = {
 
 export type Project = { id: string; name: string | null };
 
+type ContactsPayload = { contacts: Contact[]; projects: Project[] };
+
 type ContactFilter = "all" | "email" | "phone" | "recent";
-type SortKey = "created_desc" | "created_asc" | "name_asc" | "name_desc" | "last_contact_desc";
+type SortKey =
+  | "created_desc"
+  | "created_asc"
+  | "name_asc"
+  | "name_desc"
+  | "last_contact_desc";
 
 const PAGE_SIZE_OPTIONS = [25, 50, 100];
 const RECENT_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 
-export default function ContactsClient({
-  contacts,
-  projects,
-}: {
-  contacts: Contact[];
-  projects: Project[];
-}) {
+async function loadContactsData(clientId: string): Promise<ContactsPayload> {
+  const supabase = getBrowserSupabase();
+  const [contactsRes, projectsRes] = await Promise.all([
+    supabase
+      .from("client_contact")
+      .select(
+        "id, created_at, first_name, last_name, email, phone, address, project_id, last_contact_at, lead_reference"
+      )
+      .eq("client_id", clientId)
+      .order("created_at", { ascending: false })
+      .limit(5000),
+    supabase.from("projects").select("id, name").eq("client_id", clientId),
+  ]);
+  return {
+    contacts: (contactsRes.data ?? []) as Contact[],
+    projects: (projectsRes.data ?? []) as Project[],
+  };
+}
+
+export default function ContactsClient() {
+  const { client } = useAppUser();
+  const clientId = client?.id ?? null;
+  const cacheKey = clientId ? `contacts:${clientId}` : null;
+
+  const initial = cacheKey ? getCached<ContactsPayload>(cacheKey) : null;
+  const [data, setData] = useState<ContactsPayload | null>(initial);
+  const [loading, setLoading] = useState<boolean>(!initial && !!clientId);
+
+  useEffect(() => {
+    if (!clientId || !cacheKey) return;
+    let cancelled = false;
+    if (!data) setLoading(true);
+    fetchCached(cacheKey, () => loadContactsData(clientId))
+      .then((payload) => {
+        if (!cancelled) setData(payload);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [clientId, cacheKey, data]);
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<ContactFilter>("all");
   const [projectId, setProjectId] = useState<string>("all");
@@ -40,6 +87,8 @@ export default function ContactsClient({
   const [pageSize, setPageSize] = useState<number>(25);
   const [page, setPage] = useState<number>(1);
 
+  const contacts = data?.contacts ?? [];
+  const projects = data?.projects ?? [];
   const now = Date.now();
 
   const metrics = useMemo(() => {
@@ -123,6 +172,14 @@ export default function ContactsClient({
     setPage(1);
   };
 
+  if (!clientId) {
+    return (
+      <div className="text-sm" style={{ color: "var(--text-dim)" }}>
+        No client linked to this account.
+      </div>
+    );
+  }
+
   return (
     <div className="animate-pop flex flex-col gap-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -149,16 +206,14 @@ export default function ContactsClient({
         />
       </div>
 
-      {/* Metrics */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <Metric label="Total" value={metrics.total} />
-        <Metric label="With email" value={metrics.withEmail} />
-        <Metric label="With phone" value={metrics.withPhone} />
-        <Metric label="Contacted 30d" value={metrics.recent} />
+        <Metric label="Total" value={metrics.total} loading={loading && !data} />
+        <Metric label="With email" value={metrics.withEmail} loading={loading && !data} />
+        <Metric label="With phone" value={metrics.withPhone} loading={loading && !data} />
+        <Metric label="Contacted 30d" value={metrics.recent} loading={loading && !data} />
       </div>
 
       <Card padded={false}>
-        {/* Controls */}
         <div
           className="flex flex-wrap items-center gap-3 p-4"
           style={{ borderBottom: "1px solid var(--border)" }}
@@ -198,7 +253,6 @@ export default function ContactsClient({
           </Select>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] text-left text-[13px]">
             <thead>
@@ -215,7 +269,8 @@ export default function ContactsClient({
               </tr>
             </thead>
             <tbody>
-              {pageRows.length === 0 && (
+              {loading && !data && <SkeletonRows count={pageSize} />}
+              {!loading && pageRows.length === 0 && (
                 <tr>
                   <td
                     colSpan={6}
@@ -251,7 +306,9 @@ export default function ContactsClient({
                       className="px-4 py-3.5"
                       style={{ color: "var(--text-dim)" }}
                     >
-                      {c.project_id ? projectName.get(c.project_id) ?? "—" : "—"}
+                      {c.project_id
+                        ? projectName.get(c.project_id) ?? "—"
+                        : "—"}
                     </td>
                     <td
                       className="px-4 py-3.5"
@@ -272,16 +329,14 @@ export default function ContactsClient({
           </table>
         </div>
 
-        {/* Pagination */}
         <div
           className="flex flex-wrap items-center justify-between gap-3 p-4"
           style={{ borderTop: "1px solid var(--border)" }}
         >
-          <div
-            className="text-[12px]"
-            style={{ color: "var(--text-faint)" }}
-          >
-            {sorted.length === 0
+          <div className="text-[12px]" style={{ color: "var(--text-faint)" }}>
+            {loading && !data
+              ? "Loading…"
+              : sorted.length === 0
               ? "0 contacts"
               : `${start + 1}–${Math.min(start + pageSize, sorted.length)} of ${sorted.length}`}
           </div>
@@ -327,7 +382,15 @@ export default function ContactsClient({
   );
 }
 
-function Metric({ label, value }: { label: string; value: number }) {
+function Metric({
+  label,
+  value,
+  loading,
+}: {
+  label: string;
+  value: number;
+  loading: boolean;
+}) {
   return (
     <Card>
       <div
@@ -336,12 +399,19 @@ function Metric({ label, value }: { label: string; value: number }) {
       >
         {label}
       </div>
-      <div
-        className="text-[28px] font-extrabold"
-        style={{ letterSpacing: "-0.02em" }}
-      >
-        {value.toLocaleString()}
-      </div>
+      {loading ? (
+        <div
+          className="h-[34px] w-20 animate-pulse rounded-[8px]"
+          style={{ background: "var(--surface)" }}
+        />
+      ) : (
+        <div
+          className="text-[28px] font-extrabold"
+          style={{ letterSpacing: "-0.02em" }}
+        >
+          {value.toLocaleString()}
+        </div>
+      )}
     </Card>
   );
 }
@@ -406,6 +476,25 @@ function PageBtn({
     >
       {children}
     </button>
+  );
+}
+
+function SkeletonRows({ count }: { count: number }) {
+  return (
+    <>
+      {Array.from({ length: Math.min(count, 8) }).map((_, i) => (
+        <tr key={i} style={{ borderTop: "1px solid var(--border)" }}>
+          {Array.from({ length: 6 }).map((__, j) => (
+            <td key={j} className="px-4 py-3.5">
+              <div
+                className="h-4 animate-pulse rounded-[6px]"
+                style={{ background: "var(--surface)" }}
+              />
+            </td>
+          ))}
+        </tr>
+      ))}
+    </>
   );
 }
 
